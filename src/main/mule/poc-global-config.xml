@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd">
+		<global-property doc:name="Global Property" doc:id="fd0ca2e6-fe6b-447e-946d-a0558242e3cb" name="mule.env" value="dev" />
+	<global-property doc:name="Global Property" doc:id="7341d4be-7fe7-4315-b0c9-b35f72ed7675" name="secure.key" value="pT619veuKjuQCzFv" />
+	<configuration doc:name="Configuration" doc:id="ec0485b8-980a-4043-a93a-db51a88b3189" defaultErrorHandler-ref="Global_Error_Handler" />
+	<configuration-properties doc:name="Configuration properties" doc:id="a7c60273-a8a7-4e4d-b804-fd4abcd955e1" file="env/${mule.env}-config.yaml" />
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="bce8339c-126a-46de-9530-aec07f301c91" file="env/${mule.env}-config.yaml" key="${secure.key}" />
+</mule>

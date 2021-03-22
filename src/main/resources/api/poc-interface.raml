@@ -1,0 +1,11 @@
+#%RAML 1.0
+title: poc-interface
+
+mediaType: [application/xml, text/xml]
+
+/customersDetails:
+  get:
+    responses:
+      200:
+        body:
+          example: !include response/customer-details-response.json

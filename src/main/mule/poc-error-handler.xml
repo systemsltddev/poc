@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<sub-flow name="poc-exception-flow"
+		doc:id="f39c7912-b28c-497a-ab5f-b5752ceda63a">
+		<logger level="INFO" doc:name="Exception Flow Started"
+			doc:id="d24a3dc6-5dbc-4120-8bd2-c9d29e299958"
+			message='#[%dw 2.0
+output application/json indent=false,skipNullOn="everywhere"
+---
+{
+	"cId" : correlationId, 
+	"appName": app.name,
+	"flowName": flow.name,
+    "message": "Exception flow started",
+    "payload": null
+}]' />
+		<logger level="INFO" doc:name="Logging Current Payload"
+			doc:id="9420eef3-950c-498b-a7f0-b35ab2eebd57"
+			message='#[%dw 2.0&#10;output application/json indent=false,skipNullOn="everywhere"&#10;---&#10;{&#10;	"cId" : correlationId, &#10;	"appName": app.name,&#10;	"flowName": flow.name,&#10;    "message": "Logging current payload",&#10;    "payload": (payload.^raw as String) replace "\n" with "" default null&#10;}]' />
+		<ee:transform doc:name="Setting Failure Payload"
+			doc:id="a93d7021-8852-4efa-a4cd-75e5a949c6f2">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Status":"Failure"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="ERROR" doc:name="Logging Error Details"
+			doc:id="2501e283-13f6-4924-9d01-a04b021120aa"
+			message='#[%dw 2.0&#10;output application/json indent=false,skipNullOn="everywhere"&#10;---&#10;{&#10;	"cId" : correlationId, &#10;	"appName": app.name,&#10;	"flowName": flow.name,&#10;    "message": "Error Details",&#10;	"error Details": error.description,&#10;    "payload": (payload.^raw as String) replace "\n" with "" default null,&#10;    "originalPayload": vars.originalPayload default null&#10;}]' />
+		<logger level="INFO" doc:name="Exception Flow Completed"
+			doc:id="1c89c9ab-4831-41b4-87c5-15766c7b2ca7"
+			message='#[%dw 2.0
+output application/json indent=false,skipNullOn="everywhere"
+---
+{
+	"cId" : correlationId, 
+	"appName": app.name,
+	"flowName": flow.name,
+    "message": "Exception flow completed",
+    "payload": null
+}]' />
+	</sub-flow>
+	<error-handler name="Global_Error_Handler"
+		doc:id="ac8cce90-bc12-4f7a-921a-a51c02746954">
+		<on-error-propagate enableNotifications="true"
+			logException="true" doc:name="On Error Propagate"
+			doc:id="26a3a58b-79aa-4bb9-9ff5-60ead6ae7a65">
+			<flow-ref
+				doc:name="proc-timios-mockrequestapi-exception-flow"
+				doc:id="1df55cfb-e1bb-4362-b070-87ff1e3df9e6"
+				name="poc-exception-flow" />
+		</on-error-propagate>
+	</error-handler>
+
+
+</mule>
