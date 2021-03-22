@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd ">
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd ">
     <apikit:config name="poc-interface-config" api="poc-interface.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="poc-interface-main">
         <http:listener path="/api/*" config-ref="HTTP_Listener_config">
@@ -121,94 +121,9 @@ output application/json
         </error-handler>
     </flow>
     <flow name="get:\customersDetails:poc-interface-config">
-        <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-[
-  {
-    id: 1,
-    first_name: "Gianni",
-    last_name: "Josey",
-    email: "gjosey0@aboutads.info",
-    gender: "Genderfluid",
-    ip_address: "161.189.202.44"
-  }, 
-  {
-    id: 2,
-    first_name: "Haskell",
-    last_name: "Charlin",
-    email: "hcharlin1@google.de",
-    gender: "Genderqueer",
-    ip_address: "160.239.225.157"
-  }, 
-  {
-    id: 3,
-    first_name: "Zared",
-    last_name: "McCreary",
-    email: "zmccreary2@cargocollective.com",
-    gender: "Male",
-    ip_address: "82.205.68.120"
-  }, 
-  {
-    id: 4,
-    first_name: "Greta",
-    last_name: "Becket",
-    email: "gbecket3@vistaprint.com",
-    gender: "Female",
-    ip_address: "37.39.185.177"
-  }, 
-  {
-    id: 5,
-    first_name: "Benedikta",
-    last_name: "Benito",
-    email: "bbenito4@paypal.com",
-    gender: "Agender",
-    ip_address: "107.37.229.146"
-  }, 
-  {
-    id: 6,
-    first_name: "Dalila",
-    last_name: "Hatcliffe",
-    email: "dhatcliffe5@vinaora.com",
-    gender: "Female",
-    ip_address: "30.230.112.17"
-  }, 
-  {
-    id: 7,
-    first_name: "Lura",
-    last_name: "Zecchetti",
-    email: "lzecchetti6@is.gd",
-    gender: "Non-binary",
-    ip_address: "66.82.250.109"
-  }, 
-  {
-    id: 8,
-    first_name: "Jordan",
-    last_name: "Balsillie",
-    email: "jbalsillie7@flavors.me",
-    gender: "Female",
-    ip_address: "194.101.139.227"
-  }, 
-  {
-    id: 9,
-    first_name: "Rip",
-    last_name: "Bierling",
-    email: "rbierling8@shutterfly.com",
-    gender: "Polygender",
-    ip_address: "118.218.70.196"
-  }, 
-  {
-    id: 10,
-    first_name: "Ddene",
-    last_name: "Stubbin",
-    email: "dstubbin9@123-reg.co.uk",
-    gender: "Bigender",
-    ip_address: "240.156.145.177"
-  }
-]]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
+        <flow-ref doc:name="poc-implementation-customers-data" doc:id="4520c095-7b47-4be5-abb0-534ffa84f4f9" name="poc-implementation-customers-data" />
+    </flow>
+    <flow name="post:\customersDetails:application\json:poc-interface-config">
+        <flow-ref doc:name="poc-implementation-add-customer" doc:id="278c17b8-86bc-4225-a3b3-e39bd43fb49c" name="poc-implementation-add-customer"/>
     </flow>
 </mule>

@@ -1,5 +1,145 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd"></mule>
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<sub-flow name="poc-implementation-customers-data" doc:id="b22bb8af-7e2f-40d4-a936-55314c7c7574" >
+		<logger level="INFO" doc:name="Logger" doc:id="a22bd5a6-ba29-4c18-9414-652a56bb48a9" message='#[%dw 2.0
+output application/json indent=false,skipNullOn="everywhere"
+---
+{
+	"cId" : correlationId, 
+	"appName": app.name,
+	"flowName": flow.name,
+    "Message": flow.name default "" ++ " process started",
+    "Payload": null
+}]'/>
+		<ee:transform doc:name="Setting Response Payload" doc:id="d8b86001-abab-42bc-b04b-cd962e88be57" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+[
+  {
+    id: 1,
+    first_name: "Gianni",
+    last_name: "Josey",
+    email: "gjosey0@aboutads.info",
+    gender: "Genderfluid",
+    ip_address: "161.189.202.44"
+  }, 
+  {
+    id: 2,
+    first_name: "Haskell",
+    last_name: "Charlin",
+    email: "hcharlin1@google.de",
+    gender: "Genderqueer",
+    ip_address: "160.239.225.157"
+  }, 
+  {
+    id: 3,
+    first_name: "Zared",
+    last_name: "McCreary",
+    email: "zmccreary2@cargocollective.com",
+    gender: "Male",
+    ip_address: "82.205.68.120"
+  }, 
+  {
+    id: 4,
+    first_name: "Greta",
+    last_name: "Becket",
+    email: "gbecket3@vistaprint.com",
+    gender: "Female",
+    ip_address: "37.39.185.177"
+  }, 
+  {
+    id: 5,
+    first_name: "Benedikta",
+    last_name: "Benito",
+    email: "bbenito4@paypal.com",
+    gender: "Agender",
+    ip_address: "107.37.229.146"
+  }, 
+  {
+    id: 6,
+    first_name: "Dalila",
+    last_name: "Hatcliffe",
+    email: "dhatcliffe5@vinaora.com",
+    gender: "Female",
+    ip_address: "30.230.112.17"
+  }, 
+  {
+    id: 7,
+    first_name: "Lura",
+    last_name: "Zecchetti",
+    email: "lzecchetti6@is.gd",
+    gender: "Non-binary",
+    ip_address: "66.82.250.109"
+  }, 
+  {
+    id: 8,
+    first_name: "Jordan",
+    last_name: "Balsillie",
+    email: "jbalsillie7@flavors.me",
+    gender: "Female",
+    ip_address: "194.101.139.227"
+  }, 
+  {
+    id: 9,
+    first_name: "Rip",
+    last_name: "Bierling",
+    email: "rbierling8@shutterfly.com",
+    gender: "Polygender",
+    ip_address: "118.218.70.196"
+  }, 
+  {
+    id: 10,
+    first_name: "Ddene",
+    last_name: "Stubbin",
+    email: "dstubbin9@123-reg.co.uk",
+    gender: "Bigender",
+    ip_address: "240.156.145.177"
+  }
+]]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="2fbd2b8b-fa88-44f4-8220-e5e5cb4b1cf9" message='#[%dw 2.0
+output application/json indent=false,skipNullOn="everywhere"
+---
+{
+	"cId" : correlationId, 
+	"appName": app.name,
+	"flowName": flow.name,
+    "Message": flow.name default "" ++ " process ended",
+    "Payload": null
+}]'/>
+	</sub-flow>
+	<sub-flow name="poc-implementation-add-customer" doc:id="a7fad994-435e-411d-a9be-3a12298046ce" >
+		<logger level="INFO" doc:name="Logger" doc:id="c9a81158-f6d1-4e49-ac69-55c83286880d" message='#[%dw 2.0
+output application/json indent=false,skipNullOn="everywhere"
+---
+{
+	"cId" : correlationId, 
+	"appName": app.name,
+	"flowName": flow.name,
+    "Message": flow.name default "" ++ " process started",
+    "Payload": null
+}]'/>
+		<logger level="INFO" doc:name="Logging Request Payload" doc:id="c5dbdf18-6c3e-45e8-b7d5-970ad0f8f994" message="payload"/>
+		<http:request method="POST" doc:name="Request" doc:id="29d09975-6348-4293-8a2a-19807bb3c2ff" config-ref="HTTPS_Request_configuration" path="/request"/>
+		<logger level="INFO" doc:name="Logging Response Payload" doc:id="205af68f-f29e-4eac-afd2-6eb0865bf185" message="payload"/>
+		<set-payload value="#[payload]" doc:name="Response Payload" doc:id="cf09b3a7-6a38-4877-aecb-97c15a241ec2" />
+		<logger level="INFO" doc:name="Logger" doc:id="93b46f4a-dc35-4741-a142-9e1a100e27b3" message='#[%dw 2.0
+output application/json indent=false,skipNullOn="everywhere"
+---
+{
+	"cId" : correlationId, 
+	"appName": app.name,
+	"flowName": flow.name,
+    "Message": flow.name default "" ++ " process ended",
+    "Payload": null
+}]'/>
+	</sub-flow>
+</mule>

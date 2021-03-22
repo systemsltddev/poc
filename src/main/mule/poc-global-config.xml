@@ -1,12 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns="http://www.mulesoft.org/schema/mule/core"
+<mule xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd 
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd">
-		<global-property doc:name="Global Property" doc:id="fd0ca2e6-fe6b-447e-946d-a0558242e3cb" name="mule.env" value="dev" />
-	<global-property doc:name="Global Property" doc:id="7341d4be-7fe7-4315-b0c9-b35f72ed7675" name="secure.key" value="pT619veuKjuQCzFv" />
-	<configuration doc:name="Configuration" doc:id="ec0485b8-980a-4043-a93a-db51a88b3189" defaultErrorHandler-ref="Global_Error_Handler" />
-	<configuration-properties doc:name="Configuration properties" doc:id="a7c60273-a8a7-4e4d-b804-fd4abcd955e1" file="env/${mule.env}-config.yaml" />
-	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="bce8339c-126a-46de-9530-aec07f301c91" file="env/${mule.env}-config.yaml" key="${secure.key}" />
+	<global-property doc:name="Global Property"
+		doc:id="fd0ca2e6-fe6b-447e-946d-a0558242e3cb" name="mule.env"
+		value="dev" />
+	<global-property doc:name="Global Property"
+		doc:id="7341d4be-7fe7-4315-b0c9-b35f72ed7675" name="secure.key"
+		value="pT619veuKjuQCzFv" />
+	<configuration doc:name="Configuration"
+		doc:id="ec0485b8-980a-4043-a93a-db51a88b3189"
+		defaultErrorHandler-ref="Global_Error_Handler" />
+	<configuration-properties
+		doc:name="Configuration properties"
+		doc:id="a7c60273-a8a7-4e4d-b804-fd4abcd955e1"
+		file="env/${mule.env}-config.yaml" />
+	<secure-properties:config
+		name="Secure_Properties_Config" doc:name="Secure Properties Config"
+		doc:id="bce8339c-126a-46de-9530-aec07f301c91"
+		file="env/${mule.env}-config.yaml" key="${secure.key}" />
+	<http:request-config
+		name="HTTPS_Request_configuration"
+		doc:name="HTTP Request configuration"
+		doc:id="77daf653-161b-4550-b3f9-1c1c309291ab">
+		<http:request-connection protocol="${httpsRequest.protocol}"
+			host="${httpsRequest.host}" port="${httpsRequest.port}">
+			<tls:context>
+				<tls:trust-store password="${secure::httpsRequest.trust-store-password}" type="jks"
+					path="\certificates\client-truststore.jks" />
+				<tls:key-store type="jks" keyPassword="${secure::httpsRequest.key-store-keyPassword}"
+					password="${secure::httpsRequest.key-store-password}" path="\certificates\client-keystore.jks" />
+			</tls:context>
+		</http:request-connection>
+	</http:request-config>
+	<http:listener-config name="HTTPS_Listener_config"
+		doc:name="HTTP Listener config"
+		doc:id="e1ff0c8a-b990-4df1-89eb-0ee364051c59">
+		<http:listener-connection protocol="HTTPS"
+			host="${httpsListner.host}" port="${httpsListner.port}">
+			<tls:context>
+				<tls:trust-store path="\certificates\server-truststore.jks"
+					password="${secure::httpsListner.trust-store-password}" type="jks" />
+				<tls:key-store type="jks" path="\certificates\server-keystore.jks"
+					keyPassword="${secure::httpsListner.key-store-keyPassword}" password="${secure::httpsListner.key-store-password}" />
+			</tls:context>
+		</http:listener-connection>
+	</http:listener-config>
 </mule>

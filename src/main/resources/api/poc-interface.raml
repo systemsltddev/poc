@@ -2,10 +2,25 @@
 title: poc-interface
 
 mediaType: [application/xml, text/xml]
+types:
+  Customer: !include types/Customer.raml
 
 /customersDetails:
   get:
     responses:
       200:
         body:
-          example: !include response/customer-details-response.json
+          example: !include examples/customers-details-response.json
+
+  post:
+    body:
+      application/json:
+        type: Customer
+        examples:
+          input: !include examples/customer-details-request.json
+    responses:
+      201:
+        body:
+          application/json:
+            example:
+              message: Customer Added
