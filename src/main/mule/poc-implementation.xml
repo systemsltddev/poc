@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-	xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+<mule xmlns:ftp="http://www.mulesoft.org/schema/mule/ftp" xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
-http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/ftp http://www.mulesoft.org/schema/mule/ftp/current/mule-ftp.xsd">
 	<sub-flow name="poc-implementation-customers-data" doc:id="b22bb8af-7e2f-40d4-a936-55314c7c7574" >
 		<logger level="INFO" doc:name="Logger" doc:id="a22bd5a6-ba29-4c18-9414-652a56bb48a9" message='#[%dw 2.0
 output application/json indent=false,skipNullOn="everywhere"
@@ -127,9 +129,27 @@ output application/json indent=false,skipNullOn="everywhere"
     "Message": flow.name default "" ++ " process started",
     "Payload": null
 }]'/>
-		<logger level="INFO" doc:name="Logging Request Payload" doc:id="c5dbdf18-6c3e-45e8-b7d5-970ad0f8f994" message="payload"/>
+		<logger level="INFO" doc:name="Logging Request Payload" doc:id="c5dbdf18-6c3e-45e8-b7d5-970ad0f8f994" message='#[%dw 2.0
+output application/json indent=false,skipNullOn="everywhere"
+---
+{
+	"cId" : correlationId, 
+	"appName": app.name,
+	"flowName": flow.name,
+    "Message": "Request Payload Received",
+    "Payload": payload
+}]'/>
 		<http:request method="POST" doc:name="Request" doc:id="29d09975-6348-4293-8a2a-19807bb3c2ff" config-ref="HTTPS_Request_configuration" path="/request"/>
-		<logger level="INFO" doc:name="Logging Response Payload" doc:id="205af68f-f29e-4eac-afd2-6eb0865bf185" message="payload"/>
+		<logger level="INFO" doc:name="Logging Response Payload" doc:id="205af68f-f29e-4eac-afd2-6eb0865bf185" message='#[%dw 2.0
+output application/json indent=false,skipNullOn="everywhere"
+---
+{
+	"cId" : correlationId, 
+	"appName": app.name,
+	"flowName": flow.name,
+    "Message": "Response Payload Received",
+    "Payload": payload
+}]'/>
 		<set-payload value="#[payload]" doc:name="Response Payload" doc:id="cf09b3a7-6a38-4877-aecb-97c15a241ec2" />
 		<logger level="INFO" doc:name="Logger" doc:id="93b46f4a-dc35-4741-a142-9e1a100e27b3" message='#[%dw 2.0
 output application/json indent=false,skipNullOn="everywhere"
@@ -142,4 +162,44 @@ output application/json indent=false,skipNullOn="everywhere"
     "Payload": null
 }]'/>
 	</sub-flow>
+	<flow name="poc-implementationFlow" doc:id="50508cda-e8ee-4956-98de-ecf61e47ce95" >
+		<file:listener doc:name="On New or Updated File" doc:id="c292297b-51e6-40fc-8023-4941f3bf4541" config-ref="File_Config" directory="${file.source-directory}" recursive="false">
+			<scheduling-strategy >
+				<fixed-frequency />
+			</scheduling-strategy>
+			<file:matcher filenamePattern="*.pdf" />
+		</file:listener>
+		<logger level="INFO" doc:name="Logger" doc:id="6b0d25e1-05e1-4a15-810f-7df5ae05fc2b" message='#[%dw 2.0
+output application/json indent=false,skipNullOn="everywhere"
+---
+{
+	"cId" : correlationId, 
+	"appName": app.name,
+	"flowName": flow.name,
+    "Message": "File " ++ attributes.fileName ++ " read.",
+    "Payload": null
+}]'/>
+		<set-variable value="${file.complete-directory}" doc:name="Complete Directory" doc:id="0648cdef-4b92-4511-9874-1186ae15e914" variableName="completeDirectory"/>
+		<file:move doc:name="Move File To Complete Directory" doc:id="cb16edb2-fae4-46c9-8702-a2546586d3ff" config-ref="File_Config" sourcePath="#[attributes.path]" targetPath="#[vars.completeDirectory]"/>
+		<logger level="INFO" doc:name="Logger" doc:id="47492255-888b-4870-8b1e-d9b925521746" message='#[%dw 2.0
+output application/json indent=false,skipNullOn="everywhere"
+---
+{
+	"cId" : correlationId, 
+	"appName": app.name,
+	"flowName": flow.name,
+    "Message": "File " ++ attributes.fileName ++ " moved to complete directory.",
+    "Payload": null
+}]'/>
+		<logger level="INFO" doc:name="Logger" doc:id="e6b61169-774c-4475-89d8-9c9d5aff4d4f" message='#[%dw 2.0
+output application/json indent=false,skipNullOn="everywhere"
+---
+{
+	"cId" : correlationId, 
+	"appName": app.name,
+	"flowName": flow.name,
+    "Message": flow.name default "" ++ " process ended",
+    "Payload": null
+}]'/>
+	</flow>
 </mule>

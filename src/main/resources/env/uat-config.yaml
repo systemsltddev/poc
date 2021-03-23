@@ -13,3 +13,7 @@ httpsRequest:
   trust-store-password: "mulesoft"
   key-store-keyPassword: "mulesoft"
   key-store-password: "mulesoft"
+  
+file:
+  source-directory: "C:\\pdf Files\\Source Directory"
+  complete-directory: "C:\\pdf Files\\Complete Directory"
