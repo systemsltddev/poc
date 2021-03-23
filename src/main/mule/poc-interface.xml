@@ -2,16 +2,8 @@
 <mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd ">
     <apikit:config name="poc-interface-config" api="poc-interface.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="poc-interface-main">
-        <http:listener path="/api/*" config-ref="HTTP_Listener_config">
-            <http:response statusCode="#[vars.httpStatus default 200]">
-                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
-            </http:response>
-            <http:error-response statusCode="#[vars.httpStatus default 500]">
-                <http:body><![CDATA[#[payload]]]></http:body>
-                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
-            </http:error-response>
-        </http:listener>
-        <apikit:router config-ref="poc-interface-config" />
+        <http:listener doc:name="Listener" doc:id="a8763bff-1616-420b-8369-e1d4f2614330" config-ref="HTTP_Listener_config" path="/api/*"/>
+		<apikit:router config-ref="poc-interface-config" />
         <error-handler>
             <on-error-propagate type="APIKIT:BAD_REQUEST">
                 <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
@@ -94,16 +86,8 @@ output application/json
         </error-handler>
     </flow>
     <flow name="poc-interface-console">
-        <http:listener path="/console/*" config-ref="HTTP_Listener_config">
-            <http:response statusCode="#[vars.httpStatus default 200]">
-                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
-            </http:response>
-            <http:error-response statusCode="#[vars.httpStatus default 500]">
-                <http:body><![CDATA[#[payload]]]></http:body>
-                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
-            </http:error-response>
-        </http:listener>
-        <apikit:console config-ref="poc-interface-config" />
+        <http:listener doc:name="Listener" doc:id="40958a37-a9d7-46ef-a923-d5491aacf447" config-ref="HTTP_Listener_config" path="/console/*"/>
+		<apikit:console config-ref="poc-interface-config" />
         <error-handler>
             <on-error-propagate type="APIKIT:NOT_FOUND">
                 <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">

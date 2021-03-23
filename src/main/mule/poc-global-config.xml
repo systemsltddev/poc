@@ -56,4 +56,7 @@ http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/fil
 		</http:listener-connection>
 	</http:listener-config>
 	<file:config name="File_Config" doc:name="File Config" doc:id="2708f7c8-c023-42e3-9518-7c479e69b703" />
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="1a6e5494-995f-46db-a702-12691e17a3e6" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
 </mule>
